@@ -26,7 +26,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            buildConfigField("String", "API_URL", "\"https://api.themoviedb.org\"")
+            buildConfigField("String", "IMAGE_BASE_URL", "\"https://image.tmdb.org/t/p/w500\"")
+            buildConfigField("String", "TMDB_TOKEN", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NmFkMzRiZGU4NjM1MTVkNzE4YzYzZTY4OGMxYzE0NCIsIm5iZiI6MTcyNjcwMDg2MC4yOTgzNjUsInN1YiI6IjU3ZjkwMjZkYzNhMzY4NTA5NDAwMjM3NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rWqF5So6ptqs8dydFo_s6RTz_xMGZeVWcsCHL2LvApk\"")
+        }
     }
+    android.buildFeatures.buildConfig = true
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -41,7 +48,8 @@ android {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":presentation"))
+    api(project(":presentation"))
+    api(project(":data"))
 
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation (libs.androidx.lifecycle.process)
@@ -65,6 +73,22 @@ dependencies {
     implementation (libs.insert.koin.koin.core)
     implementation (libs.koin.androidx.navigation)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.android)
+    implementation(libs.koin.android.compat)
+
+    // Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.serialization)
+    implementation(libs.ktor.serialization.gson)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.auth)
+    // Logback
+    implementation(libs.logback.classic)
+
 
 //  testing
     debugImplementation(libs.bundles.androidx.ui.debug)

@@ -8,32 +8,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.lang.Exception
 
-
-//fun <T> toResultFlow(call: suspend () -> Response<T?>?): Flow<ApiResult<T?>?> {
-//    return flow<ApiResult<T>?> {
-//        emit(ApiResult.Loading(true))
-//
-//        try {
-//            val result = call()
-//            if (result?.isSuccessful == true) {
-//                result?.body()?.let {
-//                    emit(ApiResult.Loading(false))
-//                    emit(ApiResult.Success(result.body()))
-//                }
-//            } else {
-//                result?.errorBody()?.let {
-//                    emit(ApiResult.Loading(false))
-//                    emit(ApiResult.Error(NetworkParseError.parseApiError(result)))
-//                    it.close()
-//                }
-//            }
-//        } catch (e: Exception) {
-//            emit(ApiResult.Loading(false))
-//            emit(ApiResult.Error(NetworkParseError.parseApiErrorGeneralException(e)))
-//        }
-//    }.flowOn(Dispatchers.IO)
-//}
-
 fun <T> toResultFlow(call: suspend () -> retrofit2.Response<T?>?): Flow<ApiResult<T?>> = flow {
     // Emit loading true at the start.
     emit(ApiResult.Loading)

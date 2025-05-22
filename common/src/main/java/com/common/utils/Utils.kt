@@ -1,23 +1,83 @@
 package com.common.utils
 
-import android.app.Activity
+import android.content.res.Configuration
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.compose.ui.unit.LayoutDirection
+import java.util.Locale
 
 
 object Utils {
+    fun changeLanguage(localeState: MutableState<Locale>) {
+        when(localeState.value.language){
+            "en" -> {
+                localeState.value = Locale("ar")
+            }
+            "ar" -> {
+                localeState.value = Locale("en")
+            }
+        }
+    }
+    val LocalAppLocale = compositionLocalOf<MutableState<Locale>> {
+        error("No locale provided")
+    }
+    @Composable
+    fun MyLocalizedApp(
+        localeState: MutableState<Locale>,
+        content: @Composable () -> Unit
+    ) {
+        // 1) Reactive system configuration
+        val configuration = LocalConfiguration.current
+
+        // 2) Capture the original Context and RegistryOwner
+        val baseContext = LocalContext.current
+        val registryOwner = LocalActivityResultRegistryOwner.current
+
+        // 3) Build updated Configuration
+        val updatedConfig = remember(configuration, localeState.value) {
+            Configuration(configuration).apply {
+                setLocale(localeState.value)
+                setLayoutDirection(localeState.value)
+            }
+        }
+
+        // 4) Create localized Context
+        val localizedContext = remember(updatedConfig) {
+            baseContext.createConfigurationContext(updatedConfig)
+        }
+
+        // 5) Provide both Context and RegistryOwner along with layout direction
+        registryOwner?.let {
+            CompositionLocalProvider(
+                LocalContext provides localizedContext,
+                LocalActivityResultRegistryOwner provides it,
+                LocalLayoutDirection provides
+                        if (localeState.value.language == "ar")
+                            LayoutDirection.Rtl else LayoutDirection.Ltr
+            ) {
+                content()
+            }
+        }
+    }
+
+
 
     @Composable
     fun AlertDialog(title: String?,message: String?, onDismiss: () -> Unit) {

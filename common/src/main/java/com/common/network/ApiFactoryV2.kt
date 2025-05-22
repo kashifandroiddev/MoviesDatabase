@@ -15,18 +15,18 @@ class ApiFactoryV2(private val baseUrl: String, private val authType: AuthType?)
         val tag = NetworkUtils.getRandomNetworkId()
         var request = chain.request()
         when (authType) {
-            is AuthType.JwtToken -> {
-                request = request.newBuilder()
-                    .tag(tag)
-                    .addHeader(AUTHORIZATION, "${BEARER_AUTH} ${AuthTokenHelper().getJwtToken(authType.jwtInfo)}")
-                    .build()
-            }
-            is AuthType.BasicAuth -> {
-                request = request.newBuilder()
-                    .addHeader(AUTHORIZATION, "${BASIC_AUTH} ${AuthTokenHelper().getBasicAuth(authType.authInfo)}")
-                    .tag(tag)
-                    .build()
-            }
+//            is AuthType.JwtToken -> {
+//                request = request.newBuilder()
+//                    .tag(tag)
+//                    .addHeader(AUTHORIZATION, "${BEARER_AUTH} ${AuthTokenHelper().getJwtToken(authType.jwtInfo)}")
+//                    .build()
+//            }
+//            is AuthType.BasicAuth -> {
+//                request = request.newBuilder()
+//                    .addHeader(AUTHORIZATION, "${BASIC_AUTH} ${AuthTokenHelper().getBasicAuth(authType.authInfo)}")
+//                    .tag(tag)
+//                    .build()
+//            }
             is AuthType.Custom -> {
                 val builder = request.newBuilder()
                 authType.headers.forEach {
