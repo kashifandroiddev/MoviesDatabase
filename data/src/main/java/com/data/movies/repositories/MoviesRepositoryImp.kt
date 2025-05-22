@@ -12,7 +12,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlin.math.min
 
@@ -27,7 +30,29 @@ class MoviesRepositoryImp(
         // Convert it to domain model from server model
         return movieMapper.map(fetchPaginatedData(query, maxPageThreshold))
     }
-
+//    private fun fetchPaginatedData(
+//        query: String,
+//        maxPageThreshold: Int
+//    ): Flow<List<Result>> {
+//        // First, get page 1 and determine endPage
+//        return flow {
+//            val first = remoteMoviesDataSource.searchMovies(SearchMoviesInput(query))
+//            val total = first.totalPages
+//            emit(first.results)
+//        }.flatMapConcat { firstResults ->
+//            // Compute how many pages we actually want
+//            val endPage = min(50, maxPageThreshold)
+//            // Create a flow of pages 2..endPage
+//            (2..endPage).asFlow()
+//                // Fetch each page concurrently (up to 10 at once)
+//                .flatMapMerge(concurrency = 10) { page ->
+//                    flow {
+//                        val resp = remoteMoviesDataSource.searchMovies(SearchMoviesInput(query, page))
+//                        emit(resp.results)
+//                    }
+//                }
+//        }
+//    }
     private fun fetchPaginatedData(query: String, maxPageThreshold: Int): Flow<List<Result>> =
         flow {
             // Hit first time api to get total pages from response
